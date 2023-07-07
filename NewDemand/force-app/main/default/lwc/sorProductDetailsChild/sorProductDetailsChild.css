@@ -1,0 +1,8 @@
+.slds-col {margin-top:10px!important;}
+.slds-form-element__label {font-size:12px; font-weight:600 !important;}
+label{font-weight:600 !important; }
+
+
+.slds-button__icon_left, .slds-button__icon--left {
+     margin-right: var(--lwc-spacingXSmall,0px) !important; 
+}

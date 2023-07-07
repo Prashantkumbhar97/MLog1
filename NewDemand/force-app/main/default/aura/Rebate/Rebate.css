@@ -1,0 +1,38 @@
+.THIS {   
+}
+
+
+
+.THIS .slds-truncate {
+    text-overflow: inherit;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word; 
+}
+
+.THIS lightning-primitive-header-actions {
+    display: none;
+}
+
+.THIS .display-black-and-white{
+    background-color: #F0F0F0;
+    
+}
+
+.THIS .slds-form-element__label{
+    padding-right: 0rem;
+    word-wrap: unset;
+}
+
+.THIS .slds-form-element__control slds-grow{
+    padding-right: 0rem;
+}
+
+.THIS.spins::after {
+    position: absolute;
+    content: 'Fetching Records';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}

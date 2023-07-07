@@ -1,0 +1,587 @@
+<template>
+
+    <div style="margin-bottom:10px;">
+
+        <div class="slds-page-header" style="padding:0 0 0 10px;">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+
+                        <div class="slds-media__figure">
+
+                            <span class="slds-icon_container slds-icon-action-account" title="Demand Generation">
+                                <lightning-icon icon-name="standard:product_item" title="Demand Generation"
+                                    size="medium"> </lightning-icon>
+                                <span class="slds-assistive-text">{labels.Demand_Generation}</span>
+
+                            </span>
+
+                        </div>
+
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1 style="padding-bottom: 5px;">
+                                        <template if:false={demandname2}>
+                                            <span class="slds-page-header__title slds-truncate"
+                                                title="Demand Generation"
+                                                style="margin-top:12px;">{labels.Contract_Number} - {demandname}</span>
+                                        </template>
+                                        <template if:true={demandname2}>
+                                            <span class="slds-page-header__title slds-truncate"
+                                                title="Demand Generation"
+                                                style="margin-top:12px;">{labels.Contract_Number} -
+                                                {demand.contractNumber}</span>
+                                        </template>
+
+                                        <span>{labels.Demand_Generation}</span>
+
+                                    </h1>
+                                </div>
+                            </div>
+
+
+                            <template if:true={removeButton}>
+
+                                <template if:true={profileName}>
+                                    <lightning-button variant="brand" label={labels.Cancel_Demand_Status} title="Cancel"
+                                        class="slds-col" style="float:right; margin-right:20px"
+                                        onclick={handleConfirmClick}></lightning-button>
+
+                                </template>
+
+
+                                <lightning-button variant="brand" label={labels.Approval_History} title="Open Modal"
+                                    onclick={customShowModalPopup} class=" slds-col"
+                                    style="float:right; margin-right:20px"></lightning-button>
+
+
+                                <template if:true={customFormModal}>
+                                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01"
+                                        aria-modal="true" aria-describedby="modal-content-id-1"
+                                        class="slds-modal slds-fade-in-open slds-modal_large">
+                                        <div class="slds-modal__container  ">
+                                            <!-- modal header start -->
+                                            <header class="slds-modal__header">
+                                                <button
+                                                    class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                                                    title="Close" onclick={customHideModalPopup}>
+                                                    <lightning-icon icon-name="utility:close" alternative-text="close"
+                                                        variant="inverse" size="small"></lightning-icon>
+                                                </button>
+                                                <h2 id="modal-heading-02"
+                                                    class="slds-text-heading_medium slds-hyphenate">
+                                                    {labels.Approval_History}</h2>
+                                            </header>
+                                            <!-- modal body start -->
+                                            <div class="slds-modal__content slds-p-around_medium"
+                                                id="modal-content-id-2">
+                                                <c-demand-Approval-History record-id={recordId} show-comments=false
+                                                    allow-submit-for-approval=false></c-demand-Approval-History>
+                                            </div>
+                                            <!-- modal footer start-->
+                                            <footer class="slds-modal__footer">
+                                                <button class="slds-button slds-button--destructive"
+                                                    onclick={customHideModalPopup}>{labels.Cancel}</button>
+                                            </footer>
+                                        </div>
+                                    </section>
+                                    <div class="slds-backdrop slds-backdrop_open"></div>
+
+                                </template>
+                            </template>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="slds-grid slds-gutters slds-wrap">
+
+            <div class="slds-col " style=" margin-left: 12px; margin-right: 12px;">
+                <div class="slds-box slds-theme_default slds-grid slds-gutters slds-wrap">
+
+
+                    <template if:false={documentCount}>
+                        <div
+                            class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                            <lightning-input type="text" label={labels.Document_Number_SFDC}
+                                value={demand.documentNumber} disabled="true" onclick={handleSave}
+                                name="Document Number(SFDC)"></lightning-input>
+                        </div>
+                    </template>
+                    <template if:true={documentCount}>
+                        <div
+                            class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                            <lightning-input type="text" label={labels.Document_Number_SFDC} value={countDocumentNumber}
+                                disabled="true" onchange={updatevalue} name="Document Number(SFDC)"></lightning-input>
+                        </div>
+                    </template>
+
+
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                        <lightning-input type="text" label={labels.Document_Number_SAP} value={demand.SapDocumentNumber}
+                            onchange={updatevalue} name="Document Number(SAP)" disabled="true"></lightning-input>
+                    </div>
+
+                </div>
+
+                <div class="slds-box slds-theme_default slds-grid slds-gutters slds-wrap" style="margin-top: 10px;">
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    <span style="font-size:15px;font-weight:bold;">{labels.General_Information}</span>
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    
+                    </div>
+                   <!-- <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                        <span>{labels.Customer_Name}</span>
+
+                        <template if:true={plannedValue}>
+
+                            <c-lookupcmp placeholder={labels.Customer_Name} iconname='standard:product'
+                                multiselect=false sobject='Customer_and_Region_Mapping__c' fieldname='CustomerName_Formula_Field__c,
+                            Customer_Name__c,CustomerCode__c' filter={filter1}
+                                displayfield='CustomerName_Formula_Field__c' onselected={handleAccount}
+                                singleselectedrec={acc.name} onremove={handleRemoveSalesRep} cmpwidth='long'
+                                dependent=false disable={acc.disable} required="true"></c-lookupcmp>
+                        </template>
+
+
+                        <template if:false={plannedValue}>
+
+                            <c-lookupcmp placeholder={labels.Customer_Name} iconname='standard:product'
+                                multiselect=false sobject='Customer_and_Region_Mapping__c' fieldname='CustomerName_Formula_Field__c,
+                                Customer_Name__c,CustomerCode__c' filter={filter1}
+                                displayfield='CustomerName_Formula_Field__c' onselected={handleAccount}
+                                singleselectedrec={acc.name} onremove={handleRemoveSalesRep} cmpwidth='long'
+                                dependent=false disable={acc1.disable} required="true" disabled="true"></c-lookupcmp>
+                        </template>
+
+                    </div>
+                -->
+                <template if:true={plannedValue}>
+                     
+                   <div
+                    class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    <lightning-combobox name="Customer" label={labels.Customer_Name} placeholder={labels.Select}
+                            value={demand.distributorId} onchange={updatevalue} options={newoption}>
+                        </lightning-combobox>
+                    
+                    </div>
+                </template>
+
+                    <template if:false={plannedValue}>
+                        <div
+                    class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex slds-truncate">
+                   
+                        
+                            <lightning-input type="text" label={labels.Customer_Name} value={demand.distributorName} name="Customer"  disabled="true"></lightning-input>
+
+
+                        </div>
+                        </template> 
+                    
+
+                
+
+                    <template if:true={typename}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                        <lightning-input type="text" label={labels.Type} value={demand.newtype} name="Type"  disabled="true"></lightning-input>
+
+                    </div>
+                </template>
+
+                <template if:false={typename}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                        <lightning-input type="text" label={labels.Type} value={newtype11} name="Type"  disabled="true"></lightning-input>
+
+                    </div>
+                </template>
+                 
+
+                <template if:false={documentCount}>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                    <lightning-input type="text" label={labels.Contract_Number} value={demand.contractNumber} name="Contract Number"  disabled="true"></lightning-input>
+
+                </div>
+                </template>
+                <template if:true={documentCount}>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                    <lightning-input type="text" label={labels.Contract_Number} value={demandname} name="Contract Number"  disabled="true"></lightning-input>
+
+                </div>
+                </template>
+                 
+                <template if:true={thisyear}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                        <lightning-input type="text" label={labels.Year} value={year11} name="Year"  disabled="true"></lightning-input>
+
+                    </div>
+                </template>
+
+                <template if:false={thisyear}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                        <lightning-input type="text" label={labels.Year} value={finalyear} name="Year"  disabled="true"></lightning-input>
+
+                    </div>
+                </template>
+
+                 
+
+
+
+                </div>
+                <div class="slds-box slds-theme_default slds-grid slds-gutters slds-wrap" style="margin-top: 10px;">
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    <span style="font-size:15px;font-weight:bold;">{labels.Event_Information}</span>
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    
+                    </div>
+ 
+
+                    <div
+                    class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    <template if:true={plannedValue}>
+                        <lightning-input type="text" label={labels.Event_Name} value={demand.eventName}
+                            name="Event Name" onchange={updatevalue}></lightning-input>
+                    </template>
+
+                    <template if:false={plannedValue}>
+
+                        <lightning-input type="text" label={labels.Event_Name} value={demand.eventName}
+                            name="Event Name" onchange={updatevalue} disabled="true"></lightning-input>
+                    </template>
+
+
+                </div>
+
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                    <template if:true={plannedValue}>
+                        <lightning-input type="date" label={labels.Event_Date} value={demand.eventdate} name="EventDate"
+                            onchange={updatevalue}></lightning-input>
+                    </template>
+
+                    <template if:false={plannedValue}>
+                        <lightning-input type="date" name="EventDate" label={labels.Event_Date} value={demand.eventdate}
+                            onchange={updatevalue} disabled="true"></lightning-input>
+
+                    </template>
+                </div>
+
+
+
+
+
+
+                
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                    <template if:true={plannedValue}>
+
+                        <lightning-combobox name="Event Type" label={labels.Event_Type} placeholder={labels.Select}
+                            value={demand.eventType} onchange={updatevalue} options={eventType}>
+                        </lightning-combobox>
+
+
+                   <!--     <template for:each={allValues} for:item="val">
+                            <lightning-pill key={val} name={val} label={val}
+                                onremove={handleRemove}></lightning-pill>
+                        </template>  -->
+                    </template>
+                        
+                    <template if:false={plannedValue}>
+
+                        <lightning-combobox name="Event Type" label={labels.Event_Type} placeholder={labels.Select}
+                            value={demand.eventType} onchange={updatevalue} options={eventType} disabled="true">
+                        </lightning-combobox>
+
+                       <!--
+                        <template for:each={allValues} for:item="val">
+                            <lightning-pill key={val} name={val} label={val}
+                                onremove={handleRemove}></lightning-pill>
+                        </template>  -->
+                    </template>
+
+
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                
+
+                <template if:true={plannedValue}>
+                    <template if:true={otherEventType}>
+                            <lightning-input type="text" label={labels.Event_Type_Other_Remark}
+                                value={demand.otherRemarks} name="Event Type Other Remark"
+                                onchange={updatevalue}></lightning-input>
+                        
+                    </template>
+                </template>
+
+                <template if:false={plannedValue}>
+                    <template if:true={otherEventType}>
+                            <lightning-input type="text" label={labels.Event_Type_Other_Remark}
+                                value={demand.otherRemarks} name="Event Type Other Remark" onchange={updatevalue}
+                                disabled="true"></lightning-input>
+                        
+                    </template>
+                </template>
+            </div>
+                <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_12-of-12 slds-form-element__label slds-no-flex">
+                        <template if:true={plannedValue}>
+
+                            <lightning-textarea type="text" label={labels.Participate_Profile}
+                                value={demand.participateProfile} onchange={updatevalue}
+                                name="Participate Profile"></lightning-textarea>
+                        </template>
+
+                        <template if:false={plannedValue}>
+
+                            <lightning-textarea type="text" label={labels.Participate_Profile}
+                                value={demand.participateProfile} onchange={updatevalue} name="Participate Profile"
+                                disabled="true"></lightning-textarea>
+                        </template>
+
+
+                    </div>
+
+
+                    
+                    <div
+                            class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_12-of-12 slds-form-element__label slds-no-flex">
+                            <template if:true={plannedValue}>
+    
+                                <lightning-textarea type="text" label={labels.Important_Information}
+                                    value={demand.importantInformation} onchange={updatevalue}
+                                    name="Important Information"></lightning-textarea>
+                            </template>
+    
+                            <template if:false={plannedValue}>
+    
+                                <lightning-textarea type="text" label={labels.Important_Information}
+                                    value={demand.importantInformation} onchange={updatevalue} name="Important Information"
+                                    disabled="true"></lightning-textarea>
+                            </template>
+    
+                        </div>
+    
+                   
+                 </div>                
+
+
+
+
+
+
+
+
+                               
+
+                <div class="slds-box slds-theme_default slds-grid slds-gutters slds-wrap" style="margin-top: 10px;">
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    <span style="font-size:15px;font-weight:bold;">{labels.Finance_Information}</span>
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                        <lightning-input type="Number" label={labels.Total_Value_R} value={demand.totalValue}
+                            onchange={updatevalue} name="Total Value R$" min="0" disabled="true"></lightning-input>
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                        <lightning-input type="Number" label={labels.Budget_Available_R} value={demand.budgetAvailable}
+                            onchange={updatevalue} name="Budget Available R$" min="0.00"
+                            disabled="true"></lightning-input>
+                    </div>
+
+
+                    <template if:true={plannedValue}>
+
+                        <div
+                            class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                            <lightning-input type="Number" label={labels.Planned_Value_R} value={demand.plannedValue}
+                                onchange={updatevalue} name="Planned Value R$" min="0.00" max-length="10"
+                                step="any"></lightning-input>
+                        </div>
+                    </template>
+
+                    <template if:false={plannedValue}>
+                        <div
+                            class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                            <lightning-input type="Number" label={labels.Planned_Value_R} value={demand.plannedValue}
+                                onchange={updatevalue} name="Planned Value R$" min="0.00"
+                                disabled="true"></lightning-input>
+                        </div>
+                    </template>
+                    
+                    <template if:true={actualbudget1}>
+                        <template if:true={profileName1}>
+                            <div
+                                class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                                <lightning-input type="Number" label={labels.Actual_Budget_R}
+                                    value={demand.actualBudget} onchange={updatevalue} name="Actual Budget R$"
+                                    min="0.00" step="any"></lightning-input>
+                            </div>
+                        </template>
+                        <template if:false={profileName1}>
+                            <div
+                                class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                                <lightning-input type="Number" label={labels.Actual_Budget_R}
+                                    value={demand.actualBudget} onchange={updatevalue} name="Actual Budget R$" min="0.00"
+                                    disabled="true"></lightning-input>
+                            </div>
+                        </template>
+
+                    </template>
+
+
+                    <template if:false={actualbudget1}>
+                        <div
+                            class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                            <lightning-input type="Number" label={labels.Actual_Budget_R} value={demand.actualBudget}
+                                onchange={updatevalue} name="Actual Budget R$" min="0.00"
+                                disabled="true"></lightning-input>
+                        </div>
+                    </template>
+
+                    
+                    <template if:true={thisyear}>
+                        <div
+                            class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                            <lightning-input type="text" label={labels.Balance_new} value={demandbalnce}
+                                onfocusout={updatevalue} name="Balance $" min="0.00" disabled="true" step="any"></lightning-input>
+                        </div>
+                    </template>
+                    <template if:false={thisyear}>
+                        <div
+                            class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                            <lightning-input type="text" label={labels.Balance_new} value={newmainvalue1}
+                                onfocusout={updatevalue} name="Balance $" min="0.00" disabled="true" step="any"></lightning-input>
+                        </div>
+                    </template>
+    
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                    </div>   
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+
+                        <template if:false={methodOnOf}>
+                        <template if:true={plannedValue}>
+
+                            <lightning-radio-group name="Payment Method" label={labels.Payment_Method} options={options1}
+                                value={demand.paymentMethod} onchange={updatevalue} type="radio"></lightning-radio-group>
+                        </template>
+
+                        <template if:false={plannedValue}>
+
+                            <lightning-radio-group name="Payment Method" label={labels.Payment_Method} options={options1}
+                                value={demand.paymentMethod} onchange={updatevalue} type="radio"
+                                disabled="true"></lightning-radio-group>
+                        </template>
+                    </template>
+                          
+                    <template if:true={methodOnOf}>
+                        <template if:true={plannedValue}>
+
+                            <lightning-radio-group name="Payment Method" label={labels.Payment_Method} options={options2}
+                                value={demand.paymentMethod} onchange={updatevalue} type="radio"></lightning-radio-group>
+                        </template>
+
+                        <template if:false={plannedValue}>
+
+                            <lightning-radio-group name="Payment Method" label={labels.Payment_Method} options={options2}
+                                value={demand.paymentMethod} onchange={updatevalue} type="radio"
+                                disabled="true"></lightning-radio-group>
+                        </template>
+                    </template>
+
+
+
+                    </div>
+
+                </div>
+
+
+                
+
+                
+                    
+                <div class="slds-box slds-theme_default slds-grid slds-gutters slds-wrap" style="margin-top: 10px;">
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    <span style="font-size:15px;font-weight:bold;">{labels.Other_Information}</span>
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 slds-form-element__label slds-no-flex">
+                    
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+
+                        <lightning-combobox name="Status" label={labels.Status} disabled="true"
+                            placeholder={labels.Select} value={demand.status} onchange={updatevalue} options={status}>
+                        </lightning-combobox>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12 ">
+                        <lightning-combobox name="Sub Status" disabled="true" label={labels.Sub_Status}
+                            placeholder={labels.Select} value={demand.subStatus} onchange={updatevalue}
+                            options={subStatus}>
+                        </lightning-combobox>
+                    </div>
+
+                    <div
+                        class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_12-of-12 slds-form-element__label slds-no-flex">
+                        <lightning-input type="text" label={labels.Error_Message} value={demand.errorMessage}
+                            onchange={updatevalue} name="Error Message" disabled="true"></lightning-input>
+                    </div>
+
+                </div>
+
+
+
+                <div class="slds-box slds-theme_default slds-grid slds-gutters slds-wrap"
+                    style="margin-top: 10px; text-align:center;">
+                    <div class="slds-col slds-theme_default slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_12-of-12"
+                        style="margin: 0 auto; text-align:center;">
+                        <lightning-button variant="Brand" label={labels.Submit} onclick={handleSave} title="Submit"
+                            class="slds-m-right_x-small"></lightning-button>
+
+
+                        <lightning-button variant="nutral" label={labels.Cancel} title="Cancel"
+                            class="slds-m-right_x-small" onclick={handleDelete}></lightning-button>
+
+
+
+
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        <div if:true={showLoading} class="slds-spinner_inline spinner-padding">
+            <lightning-spinner alternative-text="Loading" size="medium" class="spinnerClass" style="position:fixed;top: 60px;"></lightning-spinner>
+          </div>
+      
+    </div>
+
+    
+
+</template>

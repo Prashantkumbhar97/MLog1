@@ -1,0 +1,108 @@
+.test-one {
+    background : red;
+    color : #ff7701 !important;
+}
+
+.slds-modal__container{
+    max-width: 80rem !important;
+    width:100% !important;
+}
+body {
+    font-family:myfontregular; 
+    font-size:14px; color:#000;
+    font-weight:normal !important;
+}
+@font-face {
+    font-family:myfontregular; 
+    font-size:14px; color:#000;
+    font-weight:normal !important;
+    src: url(/resource/myfontregular);
+}
+@font-face {
+    font-family:myfontlight; 
+    font-size:14px; color:#000;
+    font-weight:normal !important;
+    src: url(/resource/myfontlight);
+}
+label {
+    font-family:myfontregular;
+    font-weight:normal !important;
+    font-size:14px; color:#000;
+}
+.slds-form-element__label {
+    font-family:myfontregular;
+    font-weight:normal !important;
+    font-size:14px; color:#000;
+}
+
+.titleregular {
+    font-family:myfontlight;
+    font-weight:normal !important;
+    font-size:36px; color:#000;
+}
+.slds-box {
+    font-family:myfontregular;
+    font-weight:normal!important;
+    font-size:14px;
+    color:#000;
+}
+.slds-button_success, .slds-button--success {
+    background:#fff; text-transform:uppercase; 
+    padding-left:25px; padding-right:25px;
+    color:#ff7701; border:1px solid #ff7701; 
+    border-radius:0;
+}
+.slds-button_success:hover, .slds-button--success:hover {
+    background:#fff; text-transform:uppercase;
+    color:#ff7701; border-radius:0;
+}
+.hideLabel label{
+    display:none;
+    font-weight:normal;
+    font-size:12px;
+}
+.slds-item a {
+    font-family:myfontlight;
+    font-weight:normal;
+    font-size:16px; color:#000;
+}
+.slds-item a:hover {
+    font-family:myfontlight;
+    font-weight:normal;
+    font-size:16px; color:#ff7701;
+}
+th .slds-truncate {color:#ff7701 !important; font-weight:normal;}
+td .slds-truncate {font-family:myfontlight; color:#ff7701 !important; font-weight:normal;}
+
+
+
+.slds-table_header-fixed tbody tr:first-child td {
+    border-top: 0px;
+    font-family:myfontlight; font-size:14px;
+    color:#000; text-align:right;
+} 
+.slds-table_header-fixed tbody tr:first-child th {
+    border-top: 0px;
+    font-family:myfontlight; font-size:14px;
+    color:#ff7701 !important; text-align:right;
+}
+.slds-table--header-fixed tbody tr:first-child td {
+    border-top: 0px;
+    font-family:myfontlight; font-size:14px;
+    color:#000; text-align:right;
+}
+.slds-table--header-fixed tbody tr:first-child th {
+    border-top: 0px;
+    font-family:myfontlight; font-size:14px;
+    color:#ff7701 !important; text-align:right;
+}
+.slds-cell-fixed {
+    border:1px solid #ccc;
+}
+
+@media (min-width: 64em){
+.slds-large-size_3-of-12, .slds-large-size--3-of-12 {
+    width: 24%;
+    margin-right:10px;
+}
+}

@@ -1,0 +1,10 @@
+.radio-combo-inline .slds-form-element__control .slds-radio
+{
+    display: inline-block !important;
+}
+.btnwidth {
+    width: 100px;
+}
+.slds-cell-fixed {
+    width: 100px;
+}

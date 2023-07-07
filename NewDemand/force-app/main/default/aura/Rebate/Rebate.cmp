@@ -1,0 +1,332 @@
+<aura:component controller="BRRebateModule" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	 <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- attributes -->
+    <aura:attribute name="startDate" type="Date"/>
+    <aura:attribute name="endDate" type="Date"/>
+    
+    <aura:attribute name="filterdata" type="object"/>
+    
+    <aura:attribute name="data" type="object"/>
+    <aura:attribute name="columns" type="List"/>
+     <aura:attribute name="Distributors" type="List"/>
+     <aura:attribute name="salesRep" type="List"/>
+    <aura:attribute name="director" type="List"/>
+    <aura:attribute name="BU" type="List"/>
+     <aura:attribute name="Region" type="List"/>
+     <aura:attribute name="WFStatus" type="List"/>
+     <aura:attribute name="Category" type="List"/>
+     <aura:attribute name="Type" type="List"/>
+    <aura:attribute name="showHome" type="boolean" default="true"/>
+    <aura:attribute name="showResults" type="boolean" default="true"/>
+    <aura:attribute name="showGoal" type="boolean" default="false"/>
+    <aura:attribute name="showDetail" type="boolean" default="false"/>
+    <aura:attribute name="showCalculator" type="boolean" default="false"/>
+    <aura:attribute name="showPrint" type="boolean" default="false"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:attribute name="isDisabled" type="boolean" default="true"/>
+    
+    <!-- Attribute Declration For Pagination -->
+    
+    <aura:attribute name="PaginationList" type="List"/>
+    <aura:attribute name="startPage" type="Integer"/>
+    <aura:attribute name="endPage" type="Integer"/>
+    <aura:attribute name="totalRecords" type="Integer"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="TotalPages" type="Integer"/>
+    <aura:attribute name="PageNumber" type="Integer"/>
+    <!-- Attribute Declration For Pagination End-->
+    
+    <!-- attribute to identify logged-in user -->
+    <aura:attribute name="UserType" type="string"/>
+    <aura:attribute name="DistributorCode" type="string"/>
+    <aura:attribute name="SalesRepCode" type="string"/>
+    <aura:attribute name="RegionCode" type="string"/>
+    <aura:attribute name="ZonalCode" type="string"/>
+    <aura:attribute name="SBUCode" type="string"/>
+    <!-- end -->
+    
+    <!-- attribute to pass Goal Detail page-->
+    <aura:attribute name="ContractHeader" type="Object"/>
+    <!-- end -->
+    
+     <!-- Attribute selceted-->
+    
+    <aura:attribute name="Selecteddirector" type="String"/>
+    <aura:attribute name="SelectedBU" type="String"/>
+    <aura:attribute name="SelectedRegion" type="String"/>
+    <aura:attribute name="SelectedCTC" type="String"/>
+    <aura:attribute name="SelectedDistributor" type="String"/>
+    <aura:attribute name="SelectedTipo" type="String"/>
+    <aura:attribute name="SelectedClassi" type="String"/>
+    <aura:attribute name="SelectedStatus" type="String"/>
+     <!-- end -->
+    
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    
+    <!-- Lightning Spinner -->
+     <!-- Spinner -->
+    <aura:if isTrue="{!v.spinner}">
+        <lightning:spinner class="spins" size="large" variant="brand" alternativeText="Fetching Records" />
+    </aura:if>
+    <!-- -->
+    
+    <aura:if isTrue="{!v.showHome}">
+    <lightning:card>
+         <aura:set attribute="title">
+             </aura:set>
+             <lightning:layout>
+                 <lightning:layoutItem size="2" padding="horizontal-medium">
+        {!$Label.c.REB_Date_Of_Contract}
+                     </lightning:layoutItem>
+                 <lightning:layoutItem size="2" padding="horizontal-medium">
+                     <ui:inputDate aura:id="startdate" class="field" value="{!v.startDate}" displayDatePicker="true" />  
+               <!--      
+             <lightning:input variant="label-hidden" type="date" name="input1" label="Enter a date" value="{!v.startDate}"/> -->
+                 </lightning:layoutItem> 
+                 <lightning:layoutItem size="2" padding="horizontal-medium">
+                     <ui:inputDate aura:id="enddate" class="field" value="{!v.endDate}" displayDatePicker="true" />  
+                     <!--<lightning:input variant="label-hidden" type="date" name="input1" label="Enter a date" value="2019-12-31"/>-->
+                 </lightning:layoutItem>
+                 <lightning:layoutItem size="4">
+                 </lightning:layoutItem>
+                 <lightning:layoutItem size="1" padding="horizontal-medium">
+                     
+                     <lightning:button label="{!$Label.c.REB_Search}" title="Search" onclick="{! c.Search }"/>
+                 </lightning:layoutItem>
+                 
+                 <lightning:layoutItem size="1" padding="horizontal-medium">
+                     <lightning:button label="{!$Label.c.REB_Cancel}" title="Cancel" onclick="{! c.Cancel }"/>
+                     
+                 </lightning:layoutItem>
+                 </lightning:layout>
+          
+        
+    </lightning:card>
+    <aura:if isTrue="{!v.showResults}">
+    <lightning:card>
+         <aura:set attribute="title">
+             {!$Label.c.REB_Search_Result}
+        </aura:set>
+        
+        <lightning:layout>
+            <lightning:layoutItem size="3" padding="horizontal-medium">
+                <div class="slds-form_horizontal">
+                    
+                    <lightning:select aura:id="Diretoria" name="Diretoria" variant="label-inline" label="{!$Label.c.Rebate}" onchange="{!c.onChangeFilter}" value="{!v.Selecteddirector}">
+                    <option value="">{!$Label.c.REB_Choose_One}</option>
+                    <aura:iteration items="{!v.director}" var="dirct">
+                                        <option value="{!dirct.Id}">{!dirct.name}</option> 
+                                        
+                                    </aura:iteration>
+                </lightning:select>
+             
+                </div>
+            </lightning:layoutItem>
+            
+             <lightning:layoutItem size="3" padding="horizontal-medium">
+                 <div class="slds-form_horizontal">
+                     <lightning:select aura:id="BU" name="BU" variant="label-inline" label="{!$Label.c.RebateBU}" onchange="{!c.onChangeFilter}" value="{!v.SelectedBU}">
+                    <option value="">{!$Label.c.REB_Choose_One}</option>
+                    <aura:iteration items="{!v.BU}" var="B">
+                                        <option value="{!B.Id}">{!B.name}</option> 
+                                        
+                                    </aura:iteration>
+                <!--<lightning:select aura:id="Vendedor" name="select1" variant="label-inline" label="Vendedor" onchange="{!c.onChangeFilter}">
+                    <option value="">choose one...</option>
+                    <aura:iteration items="{!v.salesRep}" var="SR">
+                                        <option value="{!SR.Id}">{!SR.name}</option> 
+                                        
+                                    </aura:iteration>-->
+                </lightning:select>
+                 </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="3" padding="horizontal-medium">
+                 <div class="slds-form_horizontal">
+                <lightning:select aura:id="Regional" name="Regional" variant="label-inline" label="{!$Label.c.RebateRegionalName}" onchange="{!c.onChangeFilter}" value="{!v.SelectedRegion}">
+                    <option value="">{!$Label.c.REB_Choose_One}</option>
+                    <aura:iteration items="{!v.Region}" var="R">
+                                        <option value="{!R.Id}">{!R.name}</option> 
+                                        
+                                    </aura:iteration>
+
+                </lightning:select>
+                 </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="3" padding="horizontal-medium">
+                 <div class="slds-form_horizontal">
+                     
+                     <lightning:select aura:id="CTC" name="CTC" variant="label-inline" label="{!$Label.c.RebateSalesRep}" onchange="{!c.onChangeFilter}" value="{!v.SelectedCTC}">
+                    <option value="">{!$Label.c.REB_Choose_One}</option>
+                    <aura:iteration items="{!v.salesRep}" var="SR">
+                                        <option value="{!SR.Id}">{!SR.name}</option> 
+                                        
+                                    </aura:iteration>
+                     </lightning:select>    
+                <!--<lightning:select aura:id="Filial" name="select1" variant="label-inline" label="Filial" onchange="{!c.onChangeFilter}">
+                    <option value="">choose one...</option>
+                    <aura:iteration items="{!v.Region}" var="R">
+                                        <option value="{!R.Id}">{!R.name}</option> 
+                                        
+                                    </aura:iteration>
+
+                </lightning:select>-->
+                 </div>
+            </lightning:layoutItem>
+            
+        </lightning:layout>
+        
+        <lightning:layout>
+            <lightning:layoutItem size="3" padding="horizontal-medium">
+                <div class="slds-form_horizontal">
+                  <lightning:select aura:id="Distribuidor" name="Distribuidor" variant="label-inline" label="{!$Label.c.RebateDistributor}" onchange="{!c.onChangeFilter}" value="{!v.SelectedDistributor}">
+                    <option value="">{!$Label.c.REB_Choose_One}</option>
+                    <aura:iteration items="{!v.Distributors}" var="dist">
+                                        <option value="{!dist.Id}">{!dist.name}</option> 
+                                        
+                                    </aura:iteration>
+                </lightning:select> 
+                <!--<lightning:select aura:id="status" name="select1" variant="label-inline" label="Status" onchange="{!c.onChangeFilter}">
+                    <option value="">choose one...</option>
+                     <aura:iteration items="{!v.WFStatus}" var="WF">
+                                        <option value="{!WF}">{!WF}</option> 
+                                        
+                                    </aura:iteration>
+                </lightning:select>-->
+                </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="3" padding="horizontal-medium">
+                 <div class="slds-form_horizontal">
+                <lightning:select aura:id="tipo" name="select1" variant="label-inline" label="{!$Label.c.RebateType}" onchange="{!c.onChangeFilter}" value="{!v.SelectedTipo}">
+                    <option value="">{!$Label.c.REB_Choose_One}</option>
+                     <aura:iteration items="{!v.Type}" var="T">
+                                        <option value="{!T}">{!T}</option> 
+                                        
+                                    </aura:iteration>
+                </lightning:select>
+                 </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="3" padding="horizontal-medium">
+                 <div class="slds-form_horizontal">
+                <lightning:select aura:id="Classificação" name="Classificação " variant="label-inline" label="{!$Label.c.RebateCategory}" onchange="{!c.onChangeFilter}" value="{!v.SelectedClassi}">
+                    <option value="">{!$Label.c.REB_Choose_One}</option>
+                     <aura:iteration items="{!v.Category}" var="T">
+                                        <option value="{!T}">{!T}</option> 
+                                        
+                                    </aura:iteration>
+                </lightning:select>
+                 </div>
+            </lightning:layoutItem>
+             <lightning:layoutItem size="3" padding="horizontal-medium">
+                 <div class="slds-form_horizontal">
+                <lightning:select aura:id="Status" name="Status" variant="label-inline" label="{!$Label.c.REB_Status}" onchange="{!c.onChangeFilter}" value="{!v.SelectedStatus}">
+                    <option value="">{!$Label.c.REB_Choose_One}</option>
+                     <aura:iteration items="{!v.WFStatus}" var="T">
+                                        <option value="{!T}">{!T}</option> 
+                                        
+                                    </aura:iteration>
+                </lightning:select>
+                 </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+        
+        <div style="height: 40px" class="display-black-and-white slds-p-left_medium slds-p-right_medium slds-border_right slds-border_left slds-border_bottom slds-border_top">    
+        <lightning:layout >
+             
+            <lightning:layoutItem  size="3"   padding="horizontal-medium">
+                
+            <div class="slds-form_horizontal">
+                <lightning:select aura:id="PageSize" onchange="{!c.onChangePageSize}" name="select1" variant="label-inline" label="{!$Label.c.REB_Number}" >
+                    
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                </lightning:select>
+                
+                 </div> 
+                
+           </lightning:layoutItem>
+            <lightning:layoutItem size="6" padding="around-small">
+              
+                <div class="slds-form_horizontal">
+            {!$Label.c.REB_records_per_page}
+                    </div>
+                
+           </lightning:layoutItem>
+            <lightning:layoutItem size="3" padding="horizontal-medium">
+            <div >   <!-- oninput="{!c.onChangeFilter}"  onkeyup="{! c.onChangeFilter}"-->
+            <lightning:input variant="label-inline"
+            aura:id="enter-search"
+            name="enter-search"
+            label="{!$Label.c.REB_SEARCH1}"
+            type="search"
+            onchange = "{!c.onChangeFilter}"                                
+        />
+           </div>    
+           </lightning:layoutItem>
+            
+            </lightning:layout>
+        </div>   
+        
+        <lightning:layout>
+            <lightning:layoutItem size="12" class="slds-border_right slds-border_left " >
+        
+                <div style="height: 300px" class="slds-border_right slds-border_left slds-border_bottom slds-border_top">
+        <lightning:datatable
+                keyField="id"
+                data="{! v.PaginationList }"
+                columns="{! v.columns }"
+                onrowaction="{! c.handleRowAction }"
+                hideCheckboxColumn="true"/>
+    </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+         <div style="height: 35px" class="display-black-and-white slds-p-left_medium slds-p-right_medium slds-border_right slds-border_left slds-border_bottom slds-border_top">    
+        <lightning:layout>
+        <lightning:layoutItem size="3" padding="around-small">
+            <div class="slds-form_horizontal slds-p-left_x-small">
+            {!$Label.c.REB_Showing}&nbsp; {!v.PageNumber}&nbsp; {!$Label.c.REB_Of}&nbsp; {!v.TotalPages} &nbsp;{!$Label.c.REB_pages}
+
+            </div>
+        </lightning:layoutItem>
+        <lightning:layoutItem size="6" padding="horizontal-medium">
+            
+        </lightning:layoutItem>
+        <lightning:layoutItem size="3" padding="horizontal-medium">
+            <lightning:button label="{!$Label.c.REB_Previous}" title="Previous" disabled="{!v.startPage == 0}" onclick="{! c.Previous }"/>
+            <lightning:button label="{!$Label.c.REB_Next}" title="Next" disabled="{!v.PageNumber == v.TotalPages || v.TotalPages == 0}" onclick="{! c.Next }"/>
+            
+        </lightning:layoutItem>
+ 
+        </lightning:layout>
+             
+        </div>
+        <br/>
+        <lightning:layout>
+            <lightning:layoutItem size="2" padding="horizontal-medium">
+            <lightning:button label="{!$Label.c.REB_Export}" title="Export" onclick="{! c.downloadCsv }"/>
+        </lightning:layoutItem>
+        <lightning:layoutItem size="2" padding="horizontal-medium">
+        </lightning:layoutItem>
+            
+        </lightning:layout>
+    </lightning:card>
+    </aura:if>   
+    
+    
+   
+    </aura:if>
+    <aura:if isTrue="{!v.showGoal}">
+    <c:RebateGoal showHome="{!v.showHome}" showGoal="{!v.showGoal}" ContractHeader="{!v.ContractHeader}" UserType="{!v.UserType}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.showDetail}">
+    <c:RebateDetails showHome="{!v.showHome}" showDetail="{!v.showDetail}" ContractHeader="{!v.ContractHeader}"/>
+    </aura:if>
+    <!--For embedding rebate calculator button - Gurubaksh Grewal(Grazitti) (RITM0534476/RITM0523779)-->
+    <aura:if isTrue="{!v.showCalculator}">
+    <c:RebateCalculator showHome="{!v.showHome}" showCalculator="{!v.showCalculator}" ContractHeader="{!v.ContractHeader}"/>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showPrint}">
+    <c:RebatePrint showHome="{!v.showHome}" showPrint="{!v.showPrint}"  ContractHeader="{!v.ContractHeader}" UserType="{!v.UserType}"/>
+    </aura:if>
+</aura:component>

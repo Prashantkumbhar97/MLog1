@@ -1,0 +1,156 @@
+<template>
+    <div class="slds-theme_default slds-grid slds-wrap">
+        <template if:true={showSpinner}>
+            <div class="exampleHolder">
+                <lightning-spinner alternative-text={label.PleaseWait} size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+
+         <table>
+        
+           <tr>
+            <td>
+            <div style="width:200px; margin-left:30px">
+                <lightning-combobox
+                    label={label.Status}
+                    value={flag}
+                    options={statusOptions}
+                    onchange={handleSelectChange} >
+                </lightning-combobox>
+            </div>
+        </td>
+       
+           <td>
+            <div class="slds-truncate" title="">
+                <lightning-radio-group name="radioGroup"
+                    label={label.SearchFields}
+                    options={options}
+                    value={serarchField}
+                    type="radio"
+                    onchange={handleRadioChange} >
+                </lightning-radio-group>    
+            </div>
+        </td>
+        
+            <td>
+            <div style="margin-top:25px; margin-left:30px; margin-right:30px;width:410px " >
+                <c-lookupcmp placeholder={label.SearchAccount}  iconname='standard:client' multiselect=false sobject='Customer_and_Region_Mapping__c'
+                        fieldname='CustomerName_Formula_Field__c, CustomerCode__c,
+                         Customer_Name__c ' filter={Mainfilter} displayfield={serarchField} onselected={handleAccountSelected}
+                        singleselectedrec={accountName} onremove={handleRemoveAccount} cmpwidth='long'
+                        ></c-lookupcmp>
+            </div>
+        </td>
+        <td>
+    <template if:true={profileName}>
+    
+            <div style="width:200px;margin-left:150px">
+                <lightning-combobox
+                    label={label.Territory_Code}
+                    value={territoryName}
+                    onchange={handleTerrirtoySelect}
+                    options={selectOptions}
+                    placeholder="None"
+                     >
+                </lightning-combobox>
+            </div>
+        
+    </template>
+       </td>  
+    </tr>
+    </table>
+     
+        <div class="slds-scrollable_x slds-scrollable_y" style="height:355px; overflow-y:scroll; margin-top:50px;width:100%">
+        
+  
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped"
+              aria-labelledby="element-with-table-label other-element-with-table-label">
+              <thead>
+                <tr class="slds-hint-parent">
+                  <th colspan="4" style="background:#0D70A5; color:#fff; text-align:center; font-weight:600;">
+                      {label.PleaseSelectCustomer}
+                  </th>
+                </tr>                
+    
+                <tr class="slds-line-height_reset">
+                  <th scope="col">
+                      <div class="slds-truncate" style="text-align:center;">{label.SelectForForecast}
+                      </div>
+                  </th>
+                  <th scope="col">
+                      <div class="slds-truncate" style="text-align:center;">{label.SAPCode}
+                      </div>
+                  </th>
+                  <th scope="col">
+                      <div class="slds-truncate" style="text-align:left;">{label.AccountName}</div>
+                  </th>
+                  <th scope="col">
+                    <div class="slds-truncate" style="text-align:center;">{label.City}</div>
+                  </th>
+                  <!-- <th scope="col">
+                      <div class="slds-truncate" style="text-align:center;">Forecast Enabled by
+                          Demand Planner</div>
+                  </th> -->
+                </tr>
+              </thead>
+    
+              <tbody>
+                
+                <template if:true={isAccountRecords}>
+                  <template for:each={mapOfAccounts} for:item="keyValue">
+                      <tr class="slds-hint-parent" key={keyValue.key}>
+                          <td scope="row">
+                              <div class="slds-truncate" title="" style="margin:0 auto;padding-left:100px">
+                                <!-- <lightning-input type="checkbox" data-id={keyValue.value.combiKey} label='' checked={keyValue.value.isSelected}></lightning-input> -->
+                                  <template if:true={keyValue.value.isDummy}>
+                                      <lightning-input type="checkbox" data-id={keyValue.value.combiKey} label='' checked={keyValue.value.isSelected} disabled={keyValue.value.isDummy}></lightning-input>
+                                  </template>
+                                  <template if:false={keyValue.value.isDummy}> 
+                                      <lightning-input type="checkbox" data-id={keyValue.value.combiKey} label='' checked={keyValue.value.isSelected} ></lightning-input>
+                                  </template>
+                              </div>
+                          </td>
+                          
+                          <td>
+                              <div class="slds-truncate" title="" style="text-align:center;">{keyValue.value.sapCode}</div>
+                          </td>
+                          <td>
+                              <div class="slds-truncate" title="" style="text-align:left;">{keyValue.value.accountName}</div>
+                          </td>
+                          <td>
+                            <div class="slds-truncate" title="" style="text-align:center;">{keyValue.value.accountCity}</div>
+                          </td>
+                          <!-- <td>
+                              <template if:true={keyValue.value.enableForForecast}>
+                                  <div class="slds-truncate" title="" style="text-align:center;">Yes</div>
+                              </template>
+                              <template if:false={keyValue.value.enableForForecast}> 
+                                  <div class="slds-truncate" title="" style="text-align:center;">No</div>
+                              </template>
+                              
+                          </td> -->
+    
+                      </tr>
+                  </template>
+                  </template>
+                  <template if:false={isAccountRecords}>
+                      <tr class="slds-hint-parent">
+                          <!-- <th scope="row"></th> -->
+                          <td colspan="4"><div class="slds-truncate" title="" style="text-align:center;"><b>{label.NoRecordsFound}</b></div></td>
+                          <!-- <td></td> -->
+                          
+                      </tr> 
+                  </template>
+                
+              </tbody>
+            </table>
+            
+          </div>
+          <div style="text-align:center;margin:0 auto;margin-top:20px;margin-bottom: 20px;" class="slds-grid slds-wrap">
+            <lightning-button variant="brand" label={label.Savemapping} title="" onclick={handleSaveMapping} icon-name="utility:check" class="slds-m-left_x-small"></lightning-button>                           
+        </div>
+    </div>
+    
+    
+</template>

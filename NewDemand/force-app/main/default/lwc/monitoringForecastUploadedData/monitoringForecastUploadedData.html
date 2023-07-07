@@ -1,0 +1,253 @@
+<template >
+    <div class="slds" style="background:#fff;">
+      <h1 style="color:#000; font-weight:normal; font-size:18px; padding:10px 3px 3px 3px; margin:5px 0 10px 10px;"
+        class="slds-m-bottom_medium">{labels.Monitoring_Forecast_Uploaded_Data}</h1>
+      <div class="slds-grid slds-wrap slds-grid--pull-padded"
+        style="background:#fff; margin:0px; padding:0; border:1px solid #cce4f8;">
+  
+        <div style="clear:both;"></div>
+        <h3 class="slds-section-title--divider slds-p-horizontal--small slds-size--1-of-1"
+           style="margin:8px 0 0 0; background:#dcedfb; font-weight:bold;">
+            {labels.Search}
+        </h3>
+
+     <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-1"
+        style="margin-top:12px; padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid #d8dde6;">
+        <div class="slds-form-element">
+          <div class="slds-form-element__control">
+            <div style="font-size:14px; font-weight:bold;">{labels.You_are_viewing_the_information_for} {monthLabel} {year}</div>
+          </div>
+        </div>
+      </div>
+      
+
+          <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3">
+            <div class="slds-form-element" style="margin-top:12px;">
+              <label class="slds-form-element__label" for="single-form-element-id-0">{labels.indicator}</label>
+              <lightning-helptext style="white-space: pre-line" content={helptext}></lightning-helptext>
+              <div class="slds-form-element__control">
+                <lightning-combobox
+                            name={labels.indicator}
+                            value={value}
+                            variant="label-hidden"
+                            placeholder={labels.select_indicator}
+                            options={indicator}
+                            onchange={handleChangeIndicator} ></lightning-combobox>
+              </div>
+            </div>
+          </div> 
+          
+          <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3">
+            <div class="slds-form-element" style="margin-top:12px;">
+              <label class="slds-form-element__label" for="single-form-element-id-04">{labels.District}</label>
+              <div class="slds-form-element__control">
+                <c-lookupcmp placeholder={labels.District} iconname='standard:product' multiselect=false sobject='Region__c' fieldname='Name,Sales_Org_Code__c' filter={district_filter} displayfield='Name' onselected={handleDistrictSelected} singleselectedrec={district.name} onremove={handleRemoveDistrict} cmpwidth='long' dependent=false disable={district.disable}></c-lookupcmp>
+              </div>
+            </div>
+          </div> 
+
+          <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3">
+            <div class="slds-form-element" style="margin-top:12px;">
+              <label class="slds-form-element__label" for="single-form-element-id-04">{labels.Sales_Rep}</label>
+              <div class="slds-form-element__control">
+                <c-lookupcmp placeholder={labels.Sales_Rep} iconname='standard:product' multiselect=false sobject='Customer_and_Region_Mapping__c' fieldname='Name, CustomerRegion__c,CustomerRegion__r.Sales_Org_Code__c,Territory_Manager_Name__c,TerritoryManager__c' filter={salesRep_filter} displayfield='Territory_Manager_Name__c' onselected={handleSalesRepSelected} singleselectedrec={salesRep.name} onremove={handleRemoveSalesRep} cmpwidth='long' dependent=false disable={salesRep.disable}></c-lookupcmp>
+              </div>
+            </div>
+          </div> 
+
+        <div class="slds-align_absolute-center slds-p-top_small slds-p-horizontal--small slds-size--1-of-1"
+          style="padding-top:10px; margin-top:20px; margin-bottom:10px; border-top:1px solid #d8dde6;">
+          <lightning-button label={labels.Search} onclick={handleChangeSalesAggreement}></lightning-button>&nbsp;
+          <lightning-button label={labels.Cancel} onclick={handleCancel}></lightning-button>
+        </div>
+      </div>
+</div>
+<div if:true={data_found}>
+<div>
+      <div>
+      <div class="slds-grid slds-wrap" style="background: rgb(220, 237, 251);">  
+      <div class="slds-col slds-size_1-of-1 slds-large-size_9-of-12"
+           style="font-weight:bold;margin-top: 14px;padding-left: 10px;">
+            {labels.Search_Result}
+      </div>
+      <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-12"
+           style="font-weight:bold;margin-top: 14px;padding-left: 10px;">
+            {labels.select_Page_size}
+      </div>
+      <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-12 margin-top: -12px;" style="font-weight:600; float:left;margin-top: -12px;margin-bottom: 5px;padding-left: 10px;">
+      <lightning-combobox
+                    name={labels.Page_size}
+                    value={pageSize}
+                    placeholder={labels.select_Page_size}
+                    options={page_size_Option}
+                    onchange={handleChangePageSize}>
+      </lightning-combobox>
+      </div>
+    </div>
+    </div>
+      <div class="slds-scrollable_x" style="margin-bottom:0;">
+        <table class="slds-table slds-no-row-hover slds-table_bordered slds-table_cell-buffer">
+          <thead>
+            <tr class="slds-text-heading--label">
+              <th class="slds-is-sortable" scope="col">
+                <div class="slds-truncate">{labels.Sales_Rep}</div>
+              </th>
+              <th class="slds-is-sortable" scope="col">
+                <div class="slds-truncate">{labels.Region_Code}</div>
+              </th>
+              <th class="slds-is-sortable" scope="col">
+                <div class="slds-truncate">{labels.District}</div>
+              </th>
+              <th class="slds-is-sortable" scope="col">
+                <div class="slds-truncate">{labels.Sales_District_Manager}</div>
+              </th>
+              <th class="slds-is-sortable" scope="col">
+                <div class="slds-truncate">{labels.Month}</div>
+              </th>
+              <th class="slds-is-sortable" scope="col">
+                <div class="slds-truncate">{labels.Year}</div>
+              </th>
+              <th class="slds-is-sortable" scope="col">
+                <div class="slds-truncate">{labels.indicator}</div>
+              </th>
+              <th class="slds-is-sortable" scope="col">
+                <div class="slds-truncate" style="">{labels.Action}</div>
+              </th>            
+              <th class="slds-cell-shrink"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <template for:each={data} for:item="item">
+            <tr key={item.id} class="slds-hint-parent">
+             
+              <td class="slds-truncate" scope="row" data-label="Sales Rep">{item.salesRep}</td>
+              <td class="slds-truncate" scope="row" data-label="Sales Rep">{item.territoryCode}</td>
+              <td class="slds-truncate" data-label="District">{item.salesDistrict}</td>
+              <td class="slds-truncate" data-label="District">{item.salesDistrictManager}</td>
+              <td class="slds-truncate" data-label="Month">{item.monthLabel}</td>
+              <td class="slds-truncate" data-label="Year">{item.year}</td>
+              <td if:false={item.isblue} bgcolor={item.indicator} class="slds-truncate" data-label="Indicator">{item.colorText} <span><font color="">({item.indicatorCount})</font></span></td> 
+              <td if:true={item.isblue} bgcolor="#85C1E9" class="slds-truncate" data-label="Indicator">{item.colorText} <span><font color="">({item.indicatorCount})</font></span></td> 
+              <td class="slds-truncate" data-label="Action" style="height: 40px">
+                  <div if:true={item.isRed} style="">
+                    <lightning-button data-color={item.indicator} icon-name="utility:email" data-salerep={item.salesRep_id} data-territory={item.territory_id} label={labels.Send_Reminder_Email} onclick={handleSendRemainder}></lightning-button>
+
+                    <lightning-button style="padding-left: 10px;" data-color={item.indicator} icon-name="action:recall" data-indicatorcount={item.indicatorCount} data-salerep={item.salesRep_id} data-territory={item.territory_id} label="Back to Draft" onclick={handleRecall}></lightning-button>
+                  </div>
+                  <div if:true={item.isyellow} style="margin-right: 160px;">
+                    <lightning-button data-color={item.indicator} icon-name="utility:email" data-salerep={item.salesRep_id} data-territory={item.territory_id} label={labels.Send_Reminder_Email} onclick={handleSendRemainder}></lightning-button>
+                     <lightning-button style="padding-left: 10px;" data-color={item.indicator} icon-name="action:approval" data-indicatorcount={item.indicatorCount} data-salerep={item.salesRep_id} data-territory={item.territory_id}  label={labels.Mark_Forecast_as_Closed} onclick={handleCloseForecast}></lightning-button>
+                     <!-- <lightning-button style="padding-left: 10px;" data-color={item.indicator} icon-name="action:approval" data-indicatorcount={item.indicatorCount} data-salerep={item.salesRep_id} data-territory={item.territory_id} label="Mass Close" onclick={handleCloseForecast}></lightning-button> -->
+                  </div>
+                  <div if:true={item.isblue} style="">
+                    <lightning-button data-color={item.indicator} icon-name="utility:email" data-salerep={item.salesRep_id} data-territory={item.territory_id} label={labels.Send_Reminder_Email} onclick={handleSendRemainder}></lightning-button>
+                    <lightning-button style="padding-left: 10px;" data-color={item.indicator} icon-name="action:approval" data-indicatorcount={item.indicatorCount} data-salerep={item.salesRep_id} data-territory={item.territory_id} label={labels.Mark_Forecast_as_Closed} onclick={handleCloseForecast}></lightning-button>
+                    <!-- <lightning-button style="padding-left: 10px;" data-color={item.indicator} icon-name="action:approval" data-indicatorcount={item.indicatorCount} data-salerep={item.salesRep_id} data-territory={item.territory_id} label="Mass Close" onclick={handleCloseForecast}></lightning-button> -->
+                  </div>
+                  
+              </td>              
+            </tr>
+          </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class style="padding:10px; float:left;">
+      <p>{labels.Page} : {page} of {totalPage}</p>
+     </div>
+    <lightning-button-group style="display:inline;float: right;padding: 10px;">
+      <lightning-button variant="brand" label={labels.Next} icon-name="utility:forward" onclick={nextHandler} disabled={disable_btn.next}></lightning-button>
+      <lightning-button variant="brand" label={labels.Last} icon-name="utility:forward" onclick={lastHandler} disabled={disable_btn.last}></lightning-button>
+  </lightning-button-group>
+  <lightning-button-group style="display:inline;float: right;padding: 10px;">
+    <lightning-button variant="brand" label={labels.First} icon-name="action:back" onclick={firstHandler} disabled={disable_btn.first}></lightning-button>
+    <lightning-button variant="brand" label={labels.Previous} icon-name="action:back" onclick={previousHandler} disabled={disable_btn.previous}></lightning-button>
+  </lightning-button-group>
+</div>
+
+<div  if:true={show_spinner} class="demo-only" style="height:6rem">
+  <div class="slds-spinner_container" style="position: fixed;">
+    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+      <span class="slds-assistive-text">Loading</span>
+      <div class="slds-spinner__dot-a"></div>
+      <div class="slds-spinner__dot-b"></div>
+    </div>
+  </div>
+</div>
+
+<template if:true={showModel}>
+  <section  class="slds-modal slds-fade-in-open" >
+      <div class="slds-modal__container slds-scrollable_y">
+          <header class="slds-modal__header">
+              <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModalAction}>
+              <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+              </button>
+              <h2 class="slds-text-heading_medium slds-hyphenate">Agreements</h2>
+          </header>
+          <div class="slds-modal__content slds-p-around_medium">
+              <div if:true={salesRepSalesAgreements} class="slds-scrollable_y" style="height: 25rem;">
+                <div class="slds-grid slds-wrap slds-gutters" style="margin-bottom: 1rem !important;">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                      <lightning-input name="search" type="search" value={searchAgreements} label="Search Agreements"
+                        style="font-weight:600;" onkeyup={handlesearchKeyword} autocomplete="off">
+                      </lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12" style="margin-top: 1.5rem;">
+                      
+                    </div>
+                      <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12" style="margin-top: 1.5rem;">
+                      <lightning-button   variant="Neutral"
+                            label="Recall"
+                            title="Recall"
+                            onclick={getSelectedRec} 
+                            icon-name="utility:check">
+                      </lightning-button>
+                    </div>
+                  </div>     
+               <div class="slds-table_col-bordered slds-table_bordered" style="height: 13rem;">
+                 <lightning-datatable 
+                    key-field="Id"
+                    data={paginatedsalesAgreemnts}
+                    columns={salesArgreemntsColumns}
+                  >
+                  </lightning-datatable>
+                </div>
+                  <c-pagination-cmp page-size-value="10" tabledata={salesRepSalesAgreements}  onaction={handlePaginationAction}>
+                    <div class="slds-float_right" style="margin-right: 20rem;" slot="pageNumber"><b class="pagenumber">Page:</b></div>
+                </c-pagination-cmp>
+              </div>
+              <template if:true={showModelRecall}>
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                  <div class="slds-modal__container">
+                      <header class="slds-modal__header">
+                          <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModalActionRecall}>
+                              <lightning-icon icon-name="utility:close"
+                                  alternative-text="close"
+                                  variant="inverse"
+                                  size="small" ></lightning-icon>
+                              <span class="slds-assistive-text">Close</span>
+                          </button>
+                          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Recalling Items</h2>
+                      </header>
+                      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                          <p><b>Are you sure you want to recall {countRecalls} items.
+                          </b></p>
+                      </div>
+                      <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick={closeModalActionRecall} title="No">No</button>
+                        <button class="slds-button slds-button_brand" onclick={handleRecallSalesAgreements} title="Yes">Yes</button>
+                      </footer>
+                  </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+              </template>
+          </div>
+          <footer class="slds-modal__footer">
+              <lightning-button variant="brand" label="Close" title="Close"  onclick={closeModalAction}></lightning-button>
+      </footer> 
+      </div>
+  </section>
+  <div class="slds-backdrop slds-backdrop_open"></div>
+</template>
+</template>

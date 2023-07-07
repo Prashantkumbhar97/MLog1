@@ -1,0 +1,266 @@
+<template>
+
+      <template if:true={showSpinner}>
+            <div>
+               <lightning-spinner alternative-text="Loading...." size="large"></lightning-spinner>
+            </div>   
+         </template> 
+      
+   <div style="margin-top:20px;">
+         
+      <h1 class="titleregular" style="font-size:36px; font-weight:normal;">{label.Order_Summary}</h1>
+      <div style="margin:10px 0 0 0; padding:10px; background:#eaeaea;">
+         <h1 style="color:#000; font-weight:normal; font-size:18px; padding:3px 3px 3px 3px;" class="slds-m-bottom_medium">{label.Search_Order}</h1>
+         
+            <div class="slds-grid slds-wrap slds-gutters">
+                  <template if:true={isParent}>
+                        <div class="slds-col slds-size_12-of-12  slds-medium-size_6-of-12 slds-large-size_2-of-12">
+                        <lightning-combobox
+                        name="Branch"
+                        label={label.Select_Branch}
+                        value={child}
+                        options={returnChilds}
+                        onchange={handleChildChange} 
+                        >
+                        </lightning-combobox>            
+                        </div>
+                        </template>   
+            <template if:true={showSONumber}>
+               <div class="slds-col slds-size_12-of-12  slds-medium-size_6-of-12 slds-large-size_2-of-12">
+                  <lightning-input type="text" name="input" label={label.Sales_Order_No_SFDC} onchange={handleSaleOrderNoChange}></lightning-input>
+               </div>
+            </template>
+            <template if:true={showSAPNumber}>
+            <div class="slds-col slds-size_12-of-12  slds-medium-size_6-of-12 slds-large-size_2-of-12">    
+            <lightning-input type="text" name="input" label={label.Sales_Order_No_SAP} onchange={handleSONChange}></lightning-input>
+            </div>
+            </template>
+            <template if:true={showPONumber}>                 
+            <div class="slds-col slds-size_12-of-12  slds-medium-size_6-of-12 slds-large-size_2-of-12">    
+            <lightning-input type="text" name="input1" value={purchaseOrderNumber} label={label.PO_No} onchange={handlePONChange}></lightning-input>
+            </div>
+            </template>
+            <div class="slds-col slds-size_12-of-12  slds-medium-size_6-of-12 slds-large-size_2-of-12">
+            <lightning-input type="date" name="input2" value={orderDateFrom} label={label.Order_Date_From} onchange={handleODFromChange}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_12-of-12  slds-medium-size_6-of-12 slds-large-size_2-of-12">
+            <lightning-input type="date" name="input3" value={orderDateTo} label={label.Order_Date_To} onchange={handleODToChange}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_12-of-12  slds-medium-size_6-of-12 slds-large-size_2-of-12">
+            <lightning-combobox
+            name="Status"
+            label={label.Status}
+            value={status}            
+            options={options1}
+            onchange={handleStatusChange} 
+            >
+            </lightning-combobox>
+            </div>         
+            <div class="slds-col slds-size_12-of-12  slds-medium-size_6-of-12 slds-large-size_2-of-12">
+            <lightning-combobox
+            name="Product"
+            label={label.select_Product_Line_Item}
+            value={product}
+            options={returnOptions}
+            onchange={handleProductChange} 
+            >
+            </lightning-combobox>
+            </div>     
+        </div>
+        <div class="slds-m-top_medium">
+        <lightning-button label={label.Search} onclick={handleSearch} ></lightning-button>
+        </div>
+
+        </div>
+
+        <template if:true={showTable}>
+         
+        <div class="slds-grid slds-wrap ">
+         <h1 style="color:#000; font-weight:normal; font-size:18px; padding:6px; margin:7px;" class="slds-m-top_medium">{label.Search_Result}</h1>
+         <div style="clear: both"></div>
+         <div class="slds-grid slds-wrap slds-gutters" style="margin:5px;border: 1px solid #ccc;">
+            <div class="slds-scrollable_x" style="border:0px solid #ccc; margin:0; padding:0;" >
+               
+               <lightning-datatable   
+                        class="myCss"           
+                        key-field="Id"
+                        data={data}
+                        columns={columns1}
+                        sorted-by={sortBy}
+                        sorted-direction={sortDirection}
+                        onsort={doSorting}
+                        hide-checkbox-column
+                        show-row-number-column
+                        row-number-offset={rowNumberOffset}
+                        wrap-text-max-lines="3"
+                        onrowaction={handleRowAction}		
+                        >
+               </lightning-datatable>
+            
+            </div>
+         </div>   
+         
+        <div class="slds-grid slds-wrap slds-col slds-size_1-of-1 slds-large-size_9-of-12" style="margin-top:10px;">
+            <p>{label.Page} : {page} of {totalPage}</p>
+            
+        </div>
+        
+        <div class="slds-grid slds-wrap slds-col slds-size_1-of-1 slds-large-size_3-of-12" style="margin-top:10px;">
+    
+        <lightning-button-group>
+            <lightning-button variant="brand" label={label.First} onclick={handleFirst} disabled={showFirstButton}></lightning-button>
+            <lightning-button variant="brand" label={label.Previous} onclick={handlePrevious} disabled={showFirstButton}></lightning-button>
+            <lightning-button variant="brand" label={label.Next} onclick={handleNext} disabled={showLastButton}></lightning-button>
+            <lightning-button variant="brand" label={label.Last} onclick={handleLast} disabled={showLastButton}></lightning-button>
+        </lightning-button-group>
+      </div>
+          
+         <lightning-button label={label.Download} variant="brand" onclick={downloadCSVFile}  disabled={showDownload} class="slds-m-top_x-small" style="margin-left: 600px;"></lightning-button>
+             
+      </div>
+      
+   </template>
+   
+    </div>
+    <div style="clear:both;"></div>
+    <template if:true={bShowModal}>
+    <section role="dialog" tabindex="-1"
+             aria-labelledby="modal-heading-01"
+             aria-modal="true"
+             aria-describedby="modal-content-id-1"
+            class="slds-modal slds-fade-in-open slds-modal_large">
+       <div class="slds-modal__container ">
+          <!-- modal header start -->
+          <header class="slds-modal__header">
+             <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+             </button>
+             <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{label.ORDER_DETAILS}</h2>
+          </header>
+          <!-- modal body start -->
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" >
+            
+            <template if:true={isOtherCountry}>
+            <template if:true={showProgressBar}>   
+            <lightning-progress-indicator current-step={orderStatus} type="path" variant="shaded">
+               <template for:each={steps} for:item="step">
+                  <lightning-progress-step label={step.label} value={step.value} key={step.label}></lightning-progress-step>
+              </template>
+            </lightning-progress-indicator>
+            </template>
+               
+               <div class="slds-grid slds-wrap slds-gutters" style="margin-top:10px;">
+                  <p style="font-size: 20px;">{label.Sales_Order}</p>
+                  <div class="slds-grid slds-wrap slds-gutters" style="margin:5px;border: 1px solid #ccc;">
+                     <div class="slds-scrollable_x" style="border:0px solid #ccc; margin:0; padding:0;" >
+                        <lightning-datatable
+                           key-field="Id"
+                           data={records}
+                           columns={columns3}
+                           hide-checkbox-column	
+                           >
+                        </lightning-datatable>
+                     </div>
+                  </div>
+               </div>
+
+            <template if:true={showAS}>
+            <div class="slds-grid slds-wrap slds-gutters" style="margin-top:10px;">
+               <p style="font-size: 20px;">{label.Account_summary}</p>
+               <div class="slds-grid slds-wrap slds-gutters" style="margin:5px;border: 1px solid #ccc;">
+                  <div class="slds-scrollable_x" style="border:0px solid #ccc; margin:0; padding:0;" >
+                     <lightning-datatable
+                        key-field="Id"
+                        data={ASDetails}
+                        columns={ASColumns}
+                        hide-checkbox-column	
+                        >
+                     </lightning-datatable>
+                  </div>
+               </div>
+            </div>
+         </template>
+
+            <div class="slds-grid slds-wrap slds-gutters" style="margin-top:10px;"> 
+               <p style="font-size: 20px;">{label.Sales_Order_Line_Item}</p>
+               <div class="slds-grid slds-wrap slds-gutters" style="margin:5px;border: 1px solid #ccc;">
+                  <div class="slds-scrollable_x" style="border:0px solid #ccc; margin:0; padding:0;" >
+                     <lightning-datatable
+                        key-field="Id"
+                        data={LineItems}
+                        columns={columns2}
+                        hide-checkbox-column
+                        show-row-number-column	
+                        >
+                     </lightning-datatable>
+                  </div>
+               </div>   
+         </div>
+      </template>
+<template if:true={isPoland}>
+         <c-view-Order-Summary
+              record-id={recordId}
+              ></c-view-Order-Summary>
+            </template>  
+          </div>
+          <!-- modal footer start-->
+          <footer class="slds-modal__footer">
+                <template if:true={showCloneOrderButton}>
+                  <lightning-button variant="brand"
+                  label={label.Clone_Order}
+                  title="Clone Order"
+                  onclick={handleCloneOrder}
+                  class="slds-m-right_small"
+                  
+                  ></lightning-button>
+               </template> 
+               <template if:true={showEditOrderButton}>
+               <lightning-button variant="brand"
+               label={label.Edit_Order}
+               title="Edit Order"
+               onclick={handleEditOrder}
+               class="slds-m-right_small"
+               ></lightning-button>
+               </template>
+               
+                <lightning-button variant="brand"
+               label={label.Close}
+               title="Close"
+               onclick={closeModal}
+               ></lightning-button>
+          </footer>
+       </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+   </template>
+
+
+   <template if:true={aShowModal}>
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+         <div class="slds-modal__container ">
+          <!-- modal header start -->
+            <header class="slds-modal__header">
+               <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                  <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small" ></lightning-icon>
+               </button>
+               <h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">{label.Approval_History}</h2>
+            </header>
+          <!-- modal body start -->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+               <c-approval-History record-id={recordId} show-comments=false allow-submit-for-approval=false></c-approval-History>    
+            </div>
+          <!-- modal footer start-->
+          <footer class="slds-modal__footer">
+               <lightning-button variant="brand"   label={label.Close}
+               title="Close"
+               onclick={closeModal}
+               ></lightning-button>
+               
+          </footer>
+       </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+
+   </template>
+
+</template>

@@ -1,0 +1,97 @@
+<!-- sldsValidatorIgnore -->
+
+<template>
+    <template if:true={ShowDGComponent}>
+       
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+
+                 <!-- Spinner -->
+                <div class="slds-is-relative">
+                 <div>
+                    <template if:true={DGSpinner}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                </div>
+
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" >
+                        </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+
+                <div style="display: flex;">
+                    <p style="margin-top: 5px;text-align:left;;">{label.Contract_Number}:&nbsp;{dgname}</p>
+                    <h2 style=" flex: 2;margin-left: -10%;" id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{label.Demand_Generation}</h2>
+                </div>
+                  
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                  <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    
+		 <div  class="slds-box">
+            <div class="slds-grid slds-gutters ">
+                <lightning-input class="slds-col slds-size_5-of-12" 
+                                 style="font-weight:bold"
+                                 type="text"
+                                 variant="label-inline" 
+                                 label={label.Total_Value_R}
+                                 value={totalbalance}
+                                 disabled > 
+               </lightning-input>  
+ 
+            
+                    <lightning-input 
+                                    class="slds-col slds-size_5-of-12" 
+                                    style="font-weight:bold"
+                                    type="text"
+                                    variant="label-inline"
+                                    label={label.Budget_Balance}
+                                    value={balance} 
+                                    disabled>
+                    </lightning-input>
+
+           
+                    
+                <div style="margin-top: 5px;">
+                    <template if:true={profileName}>
+                        <lightning-button label={label.New}
+                                    variant="brand"
+                                    onclick={navigateToEditTab}
+                                    disabled={disableButton}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+
+     
+        <div style="max-height: 238px; overflow:auto">
+                    <lightning-datatable key-field="Id"
+                                    data={DGData} 
+                                    columns={columns}  
+                                    hide-checkbox-column="true"
+                                    onrowaction={handleRowAction}>
+                    </lightning-datatable> 
+            </div>         
+        </div>
+    </div>
+                <!-- Modal/Popup Box LWC footer starts here -->
+                <footer class="slds-modal__footer">
+                   
+                   <lightning-button variant="destructive"
+                        label={label.close} 
+                        onclick={closeModal} >
+                    </lightning-button>        
+                </footer>
+            </div>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
